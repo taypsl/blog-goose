@@ -97,6 +97,37 @@ app.delete('/posts/:id', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
+// runServer connects to database and then initiates server
+// closeServer closes server and returns Promise
+let server;
 
+function runServer() {
+  const port = process.env.PORT || 8080; 
+  return new Promise((resolve, reject) => {
+    //connect to mongoose database (update URL)
+    //mongoose.connect(database URL, err => {if (err) { return reject(err);})
+    server = app.listen(port, () => {
+      console.log(`Your app is listening on port ${port}`);
+      resolve();
+    })
+    .on('error', err => {
+      reject(err);
+    });
+  });
+}
 
-
+// this function closes the server, and returns a promise. we'll
+// use it in our integration tests later.
+function closeServer() {
+  return mongoose.disconnect().then(() => {
+     return new Promise((resolve, reject) => {
+       console.log('Closing server');
+       server.close(err => {
+           if (err) {
+               return reject(err);
+           }
+           resolve();
+       });
+     });
+  });
+}
