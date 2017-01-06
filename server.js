@@ -86,7 +86,7 @@ app.put('/blogposts/:id', (req, res) => {
   BlogPost
     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
     .exec()
-    .then(blogpost => res.status(201).end())
+    .then(blogpost => res.status(201).json(toUpdate))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
@@ -94,7 +94,7 @@ app.delete('/blogposts/:id', (req, res) => {
   BlogPost
     .findByIdAndRemove(req.params.id)
     .exec()
-    .then(blogpost => res.status(204).end())
+    .then(blogpost => res.status(201).json({message: 'Post deleted!'}).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 

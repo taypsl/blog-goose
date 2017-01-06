@@ -20,7 +20,8 @@ blogSchema.methods.apiRepr = function() {
   return {
     id: this._id,
     title: this.title,
-    author: this.authorString,
+    author: this.author,
+    content: this.content
   };
 }
 
