@@ -7,7 +7,7 @@ const blogSchema = mongoose.Schema({
     	firstName: String,
     	lastName: String
     }	
-    content: {type: String, required: true},
+    content: {type: String, required: true}
 });
 
 //return author name as a human-readable string
