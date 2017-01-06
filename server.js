@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 
 mongoose.Promise = global.Promise;
 
@@ -9,6 +10,7 @@ const {BlogPost} = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan('common'));
 
 // what am I making my get request to? / "" ? 
 app.get('/posts', (req, res) => {
@@ -100,33 +102,38 @@ app.delete('/posts/:id', (req, res) => {
 // closeServer closes server and returns Promise
 let server;
 
-function runServer() {
-  const port = process.env.PORT || 8080; 
-  return new Promise((resolve, reject) => {
-    //connect to mongoose database (update URL)
-    //mongoose.connect(database URL, err => {if (err) { return reject(err);})
-    server = app.listen(port, () => {
-      console.log(`Your app is listening on port ${port}`);
-      resolve();
-    })
-    .on('error', err => {
-      reject(err);
-    });
-  });
+function runServer(databaseUrl=DATABASE_URL, port=PORT) {
+	return new Promise((resolve, reject) => {
+	    mongoose.connect(databaseUrl, err => {
+	       if (err) {
+	       	return reject(err);
+	      }
+	      server = app.listen(port, () => {
+	        console.log(`Your app is listening on port ${port}`);
+	        resolve();
+	      })
+	      .on('error', err => {
+	        mongoose.disconnect();
+	        reject(err);
+	      });
+	    });
+	});
 }
 
 // this function closes the server, and returns a promise. we'll
 // use it in our integration tests later.
 function closeServer() {
-  return mongoose.disconnect().then(() => {
-     return new Promise((resolve, reject) => {
-       console.log('Closing server');
-       server.close(err => {
-           if (err) {
-               return reject(err);
-           }
-           resolve();
-       });
-     });
-  });
+	return mongoose.disconnect().then(() => {
+	    return new Promise((resolve, reject) => {
+	    	console.log('Closing server');
+	       	server.close(err => {
+	            if (err) {
+	            	return reject(err);
+	            }
+	            resolve();
+	       	});
+	    });
+	});
 }
+
+module.exports = {runServer, app, closeServer};
