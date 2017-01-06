@@ -16,7 +16,7 @@ blogSchema.virtual('authorString').get(function() {
 });
 
 // create instance method to create object for API to return
-restaurantSchema.methods.apiRepr = function() {
+blogSchema.methods.apiRepr = function() {
 	return {
 	    id: this._id,
 	    title: this.title,

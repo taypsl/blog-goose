@@ -1,7 +1,6 @@
-const express = require('express');
 const bodyParser = require('body-parser');
+const express = require('express');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 
 mongoose.Promise = global.Promise;
 
@@ -10,7 +9,6 @@ const {BlogPost} = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(morgan('common'));
 
 // what am I making my get request to? / "" ? 
 app.get('/posts', (req, res) => {
@@ -136,4 +134,4 @@ function closeServer() {
 	});
 }
 
-module.exports = {runServer, app, closeServer};
+module.exports = { app, runServer, closeServer};
